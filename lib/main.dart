@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quizzler_app/questions.dart';
 import 'package:quizzler_app/quizBrain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 QuizBrain quizBrain = QuizBrain();
 
@@ -39,6 +39,29 @@ class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
   List<Icon> reverseScoreKeeper = [];
 
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getAnswer();
+    if (userPickedAnswer == correctAnswer) {
+      scoreKeeper.add(
+        const Icon(
+          Icons.check,
+          color: Colors.green,
+        ),
+      );
+    } else {
+      scoreKeeper.add(
+        const Icon(
+          Icons.close,
+          color: Colors.red,
+        ),
+      );
+    }
+    if (scoreKeeper.length == 13) {
+      scoreKeeper.clear();
+      reverseScoreKeeper.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -51,7 +74,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                quizBrain.questionBank[questionIndex].questionText,
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 25.0,
@@ -79,32 +102,12 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 //The user picked true.
 
-                bool correctAnswer =
-                    quizBrain.questionBank[questionIndex].answer;
-
                 setState(() {
-                  if (questionIndex == quizBrain.questionBank.length - 1) {
-                    questionIndex = 0;
-                  } else {
-                    questionIndex++;
-                  }
-                  if (correctAnswer == true) {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                    );
-                  } else {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      ),
-                    );
-                    reverseScoreKeeper =
-                        scoreKeeper.reversed.toList(growable: true);
-                  }
+                  quizBrain.nextQuestion(context);
+
+                  checkAnswer(true);
+                  reverseScoreKeeper =
+                      scoreKeeper.reversed.toList(growable: true);
                 });
               },
             ),
@@ -128,34 +131,12 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 //The user picked false.
 
-                bool correctAnswer =
-                    quizBrain.questionBank[questionIndex].answer;
-
                 setState(() {
-                  if (questionIndex == quizBrain.questionBank.length - 1) {
-                    questionIndex = 0;
-                  } else {
-                    questionIndex++;
-                  }
-                  if (correctAnswer) {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      ),
-                    );
-                    reverseScoreKeeper =
-                        scoreKeeper.reversed.toList(growable: true);
-                  } else {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                    );
-                    reverseScoreKeeper =
-                        scoreKeeper.reversed.toList(growable: true);
-                  }
+                  quizBrain.nextQuestion(context);
+                  checkAnswer(false);
+
+                  reverseScoreKeeper =
+                      scoreKeeper.reversed.toList(growable: true);
                 });
               },
             ),

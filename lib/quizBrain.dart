@@ -1,7 +1,12 @@
+// ignore: file_names
+import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:quizzler_app/questions.dart';
 
 class QuizBrain {
-  List<Questions> questionBank = [
+  int _questionNumber = 0;
+
+  final List<Questions> _questionBank = [
     Questions('Some cats are actually allergic to humans', true),
     Questions('You can lead a cow down stairs but not up stairs.', false),
     Questions(
@@ -29,4 +34,22 @@ class QuizBrain {
         'In West Virginia, USA, if you accidentally hit an animal with your car, you are free to take it home to eat.',
         true),
   ];
+  String getQuestionText() {
+    return _questionBank[_questionNumber].questionText;
+  }
+
+  bool getAnswer() {
+    return _questionBank[_questionNumber].answer;
+  }
+
+  void nextQuestion(BuildContext context) {
+    if (_questionNumber == _questionBank.length - 1) {
+      Alert(context: context, title: "RFLUTTER", desc: "Flutter is awesome.")
+          .show();
+      _questionNumber = 0;
+    } else {
+      _questionNumber++;
+    }
+    print('Question No : $_questionNumber');
+  }
 }
